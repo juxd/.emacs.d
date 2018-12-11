@@ -1,0 +1,88 @@
+#+TITLE: juxd's newbie emacs config
+
+* Still todo:
+  - [ ] Disable backup files
+  - [ ] Auto-complete for AUCTeX
+
+* Some emacs preferences:
+  #+BEGIN_SRC emacs-lisp :tangle yes
+(setq inhibit-startup-message t)
+(setq custom-file "~/.emacs.d/custom.el")
+(setq mac-option-modifier 'super)
+(setq mac-command-modifier 'meta)
+
+(add-to-list 'default-frame-alist '(font . "Inconsolata-g for Powerline 12"))
+(set-face-attribute 'default t :font "Inconsolata-g for Powerline 12" )
+
+(when (version<= "26.0.50" emacs-version)
+  (global-display-line-numbers-mode))
+  #+END_SRC
+* Exec path from shell:
+  #+BEGIN_SRC emacs-lisp :tangle yes
+(use-package exec-path-from-shell
+  :ensure f
+  :if (memq window-system '(mac ns))
+  :config
+  (exec-path-from-shell-initialize))
+  #+END_SRC
+* Some shit I got from online youtube tutorials lol:
+  #+BEGIN_SRC emacs-lisp :tangle yes
+(use-package try
+  :ensure t)
+
+(use-package which-key
+  :ensure t
+  :config (which-key-mode))
+
+(use-package avy
+  :ensure t
+  :config
+  (avy-setup-default))
+
+;; auto-complete settings
+(use-package auto-complete
+  :ensure t
+  :init
+  (progn
+    (ac-config-default)
+    (global-auto-complete-mode t)
+    ))
+ 
+(setq ac-auto-start nil)
+(ac-set-trigger-key "TAB")
+
+  #+END_SRC
+* Solarized:
+  #+BEGIN_SRC emacs-lisp :tangle yes
+(use-package solarized-theme
+  :ensure t
+  :config
+  (load-theme 'solarized-dark t))
+  #+END_SRC
+* LaTeX:
+  #+BEGIN_SRC emacs-lisp :tangle yes
+(use-package auctex
+  :defer t
+  :mode ("\\.tex\\'" . latex-mode)
+  :custom
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  (TeX-syntactic-comment t)
+  ;; Synctex Support
+  (TeX-source-correlate-start-server nil)
+  ;; Don't insert line-break at inline math
+  (LaTeX-fill-break-at-separators nil)
+  (TeX-view-program-list '(("zathura" "zathura --page=%(outpage) %o")))
+  (TeX-view-program-selection '((output-pdf "zathura")))
+  :config
+  (setq-default TeX-engine 'luatex)
+  (add-hook 'LaTeX-mode-hook
+            (lambda ()
+              (company-mode)
+              (setq TeX-PDF-mode t)
+              (setq TeX-source-correlate-method 'synctex)
+              (setq TeX-source-correlate-start-server t)))
+  (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+  (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
+  (add-hook 'LaTeX-mode-hook 'TeX-PDF-mode))
+  #+END_SRC
