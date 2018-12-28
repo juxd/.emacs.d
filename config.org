@@ -10,9 +10,12 @@
 (setq custom-file "~/.emacs.d/custom.el")
 (setq mac-option-modifier 'super)
 (setq mac-command-modifier 'meta)
+(defalias 'yes-or-no-p 'y-or-n-p)
 
-(add-to-list 'default-frame-alist '(font . "Inconsolata-g for Powerline 12"))
-(set-face-attribute 'default t :font "Inconsolata-g for Powerline 12" )
+(add-to-list 'default-frame-alist '(font . "Anonymous Pro for Powerline 14"))
+(add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
+
+(set-face-attribute 'default t :font "Anonymous Pro for Powerline 14" )
 
 (when (version<= "26.0.50" emacs-version)
   (global-display-line-numbers-mode))
