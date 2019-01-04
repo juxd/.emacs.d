@@ -20,6 +20,13 @@
 (when (version<= "26.0.50" emacs-version)
   (global-display-line-numbers-mode))
   #+END_SRC
+
+Custom buttons :D
+#+BEGIN_SRC emacs-lisp :tangle yes
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+#+END_SRC
 * Exec path from shell:
   #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package exec-path-from-shell
@@ -121,6 +128,26 @@
   (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
   (add-hook 'LaTeX-mode-hook 'TeX-PDF-mode))
   #+END_SRC
+* Agenda management:
+  Sync org files with Dropbox for agenda management. Inspired by [[https://github.com/j0/][Joel]] & [[https://github.com/jethrokuan/.emacs.d][Jethro]].
+** 1. Capture setup:
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq org-capture-templates
+  `(("w" "work" entry (file "~/Dropbox/org/todos.org")
+  "* TODO %?")
+  ("e" "low priority" entry (file "~/Dropbox/org/low-prio.org")
+  "* TODO %?")
+  ("r" "reading" entry (file "~/Dropbox/org/to-read.org")
+  "* TODO %?")))
+#+END_SRC
+** 2. Agenda setup:
+#+BEGIN_SRC emacs-lisp :tangle yes
+(require 'org-agenda)
+(setq org-agenda-files
+  `("~/Dropbox/org/todos.org"
+    "~/Dropbox/org/low-prio.org"
+    "~/Dropbox/org/to-read.org"))
+#+END_SRC
 * Magit:
   #+BEGIN_SRC emacs-lisp :tangle yes
     ;; COMING SOON :o 
