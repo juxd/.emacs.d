@@ -27,6 +27,13 @@ Custom buttons :D
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
 #+END_SRC
+
+Indentation
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setq-default tab-width 2)
+(setq-default js-indent-level 2)
+(setq-default indent-tabs-mode nil)
+#+END_SRC
 * Exec path from shell:
   #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package exec-path-from-shell
@@ -134,11 +141,11 @@ Custom buttons :D
 #+BEGIN_SRC emacs-lisp :tangle yes
 (setq org-capture-templates
   `(("w" "work" entry (file "~/Dropbox/org/todos.org")
-  "* TODO %?")
+  "* TODO %?\n%U\n%a\n")
   ("e" "low priority" entry (file "~/Dropbox/org/low-prio.org")
-  "* TODO %?")
+  "* TODO %?\n%U\n%a\n")
   ("r" "reading" entry (file "~/Dropbox/org/to-read.org")
-  "* TODO %?")))
+  "* TODO %?\n%U\n%a\n")))
 #+END_SRC
 ** 2. Agenda setup:
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -147,6 +154,13 @@ Custom buttons :D
   `("~/Dropbox/org/todos.org"
     "~/Dropbox/org/low-prio.org"
     "~/Dropbox/org/to-read.org"))
+(setq org-agenda-span 'month)
+;; this is just so I keep track of when things are done
+(setq org-log-done 'time)
+#+END_SRC
+* Epub reading:
+#+BEGIN_SRC emacs-lisp :tangle yes
+(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 #+END_SRC
 * Magit:
   #+BEGIN_SRC emacs-lisp :tangle yes
