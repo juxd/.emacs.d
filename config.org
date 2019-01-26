@@ -12,10 +12,10 @@
 (setq mac-command-modifier 'meta)
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-(add-to-list 'default-frame-alist '(font . "Anonymous Pro for Powerline 14"))
+(add-to-list 'default-frame-alist '(font . "SF Mono 12"))
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
 
-(set-face-attribute 'default t :font "Anonymous Pro for Powerline 14" )
+(set-face-attribute 'default t :font "SF Mono 12" )
 
 (when (version<= "26.0.50" emacs-version)
   (global-display-line-numbers-mode))
@@ -101,12 +101,12 @@ Indentation
 	(define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
 	))
   #+END_SRC
-* Solarized:
+* Theme lol:
   #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package solarized-theme
+(use-package overcast-theme
   :ensure t
   :config
-  (load-theme 'solarized-dark t))
+  (load-theme 'overcast t))
   #+END_SRC
 * LaTeX:
   #+BEGIN_SRC emacs-lisp :tangle yes
