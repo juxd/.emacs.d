@@ -12,10 +12,10 @@
 (setq mac-command-modifier 'meta)
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-(add-to-list 'default-frame-alist '(font . "SF Mono 12"))
+(add-to-list 'default-frame-alist '(font . "Iosevka 14"))
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
 
-(set-face-attribute 'default t :font "SF Mono 12" )
+(set-face-attribute 'default t :font "Iosevka 14" )
 
 (when (version<= "26.0.50" emacs-version)
   (global-display-line-numbers-mode))
@@ -33,6 +33,11 @@ Indentation
 (setq-default tab-width 2)
 (setq-default js-indent-level 2)
 (setq-default indent-tabs-mode nil)
+#+END_SRC
+
+Org mode hooks
+#+BEGIN_SRC emacs-lisp :tangle yes
+(add-hook 'org-mode-hook (lambda () (mac-auto-operator-composition-mode 1)))
 #+END_SRC
 * Exec path from shell:
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -164,7 +169,7 @@ Indentation
 #+END_SRC
 * Magit:
   #+BEGIN_SRC emacs-lisp :tangle yes
-    ;; COMING SOON :o 
+  (global-set-key (kbd "C-x g") 'magit-status)
   #+END_SRC
 * Reveal.js:
 #+BEGIN_SRC emacs-lisp :tangle yes
