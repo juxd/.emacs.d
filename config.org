@@ -33,6 +33,7 @@ Indentation
 (setq-default tab-width 2)
 (setq-default js-indent-level 2)
 (setq-default indent-tabs-mode nil)
+(setq-default show-trailing-whitespace t) ;; show trailing whitespaces
 #+END_SRC
 
 Org mode hooks
@@ -186,4 +187,14 @@ Org mode hooks
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package scala-mode)
 (add-to-list 'auto-mode-alist '("\\.x10\\'" . scala-mode))
+#+END_SRC
+* Rails projectile
+#+BEGIN_SRC emacs-lisp :tangle yes
+(setenv "PATH" (concat (getenv "HOME") "/.rbenv/shims:" (getenv "HOME") "/.rbenv/bin:" (getenv "PATH")))
+(setq exec-path (cons (concat (getenv "HOME") "/.rbenv/shims") (cons (concat (getenv "HOME") "/.rbenv/bin") exec-path)))
+(add-to-list 'load-path "~/.emacs.d/vendor/bundler.el")
+(require 'bundler)
+(projectile-rails-global-mode)
+;; hotfix for rbenv shell problem.
+
 #+END_SRC
