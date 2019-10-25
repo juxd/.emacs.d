@@ -40,8 +40,23 @@ Indentation
 Org mode hooks
 #+BEGIN_SRC emacs-lisp :tangle yes
 (add-hook 'org-mode-hook (lambda () (mac-auto-operator-composition-mode 1)))
-;; Adds alphabetical bulleting. JK ITS BROKEN 
+;; Adds alphabetical bulleting. JK ITS BROKEN
 ;;(setq org-list-allow-alphabetical nil)
+#+END_SRC
+
+Snippets
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package yasnippet
+  :diminish yas-global-mode yas-minor-mode
+  :config
+  (yas-global-mode +1)
+  :custom
+  (yas-snippet-dirs '("~/.emacs.d/snippets/snippets/")))
+#+END_SRC
+
+Remove blinking cursor
+#+BEGIN_SRC emacs-lisp :tangle yes
+(blink-cursor-mode 0)
 #+END_SRC
 * Exec path from shell:
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -57,7 +72,7 @@ Org mode hooks
   :ensure t
   :init (global-flycheck-mode))
 #+END_SRC
-* Some shit I got from online youtube tutorials lol:
+* Some shit I got from online:
 ** Noob helpers
   #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package try
@@ -66,6 +81,8 @@ Org mode hooks
 (use-package which-key
   :ensure t
   :config (which-key-mode))
+
+(delete-selection-mode 1)
   #+END_SRC
 ** Typing helpers
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -82,10 +99,16 @@ Org mode hooks
     (ac-config-default)
     (global-auto-complete-mode t)
     ))
- 
+
 (setq ac-auto-start nil)
 (ac-set-trigger-key "TAB")
 
+(setq-default truncate-lines t)
+
+(defun jethro/truncate-lines-hook () ;; stolen from jethro :P
+  (setq truncate-lines nil))
+
+(add-hook 'text-mode-hook 'jethro/truncate-lines-hook)
   #+END_SRC
 ** Swiper no swiping
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -118,10 +141,25 @@ Org mode hooks
   #+END_SRC
 * Theme lol:
   #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package overcast-theme
-  :ensure t
-  :config
-  (load-theme 'overcast t))
+  (use-package all-the-icons)
+  (use-package doom-modeline
+      :ensure t
+      :hook (after-init . doom-modeline-mode))
+  (require 'doom-themes)
+
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+
+  ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
+  ;; may have their own settings.
+  (load-theme 'doom-one t)
+
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config)
   #+END_SRC
 * LaTeX:
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -150,6 +188,15 @@ Org mode hooks
   (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
   (add-hook 'LaTeX-mode-hook 'TeX-source-correlate-mode)
   (add-hook 'LaTeX-mode-hook 'TeX-PDF-mode))
+  (with-eval-after-load 'ox-latex
+  (add-to-list 'org-latex-classes
+          '("koma-article"
+             "\\documentclass{scrartcl}"
+             ("\\section{%s}" . "\\section*{%s}")
+             ("\\subsection{%s}" . "\\subsection*{%s}")
+             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+             ("\\paragraph{%s}" . "\\paragraph*{%s}")
+             ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
   #+END_SRC
 * Agenda management:
   Sync org files with Dropbox for agenda management. Inspired by [[https://github.com/j0/][Joel]] & [[https://github.com/jethrokuan/.emacs.d][Jethro]].
@@ -193,11 +240,6 @@ Org mode hooks
 (use-package htmlize
 :ensure t)
 #+ENd_SRC
-* x10 lol:
-#+BEGIN_SRC emacs-lisp :tangle yes
-(use-package scala-mode)
-(add-to-list 'auto-mode-alist '("\\.x10\\'" . scala-mode))
-#+END_SRC
 * Rails projectile
 #+BEGIN_SRC emacs-lisp :tangle yes
 (setenv "PATH" (concat (getenv "HOME") "/.rbenv/shims:" (getenv "HOME") "/.rbenv/bin:" (getenv "PATH")))
@@ -262,9 +304,14 @@ TODO: add hs-lint.
  '(haskell-stylish-on-save t))
 #+END_SRC
 * Python IDE:
-#+BEGIN_SRC emacs_lisp :tangle yes
+#+BEGIN_SRC emacs-lisp :tangle yes
 (use-package elpy
   :ensure t
   :init
   (elpy-enable))
 #+END_SRC
+* Prolog
+  #+BEGIN_SRC emacs-lisp :tangle yes
+  (global-set-key (kbd "C-x p") 'ediprolog-dwim)
+  (add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
+  #+END_SRC
