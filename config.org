@@ -12,10 +12,10 @@
 (setq mac-command-modifier 'meta)
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-(add-to-list 'default-frame-alist '(font . "Iosevka 14"))
+(add-to-list 'default-frame-alist '(font . "Inconsolata for Powerline 14"))
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
 
-(set-face-attribute 'default t :font "Iosevka 14" )
+(set-face-attribute 'default t :font "Inconsolata for Powerline 14" )
 
 (when (version<= "26.0.50" emacs-version)
   (global-display-line-numbers-mode))
@@ -48,10 +48,9 @@ Snippets
 #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package yasnippet
   :diminish yas-global-mode yas-minor-mode
-  :config
-  (yas-global-mode +1)
-  :custom
-  (yas-snippet-dirs '("~/.emacs.d/snippets/snippets/")))
+  :ensure t
+  :init
+  (yas-global-mode 1))
 #+END_SRC
 
 Remove blinking cursor
@@ -191,12 +190,29 @@ Remove blinking cursor
   (with-eval-after-load 'ox-latex
   (add-to-list 'org-latex-classes
           '("koma-article"
-             "\\documentclass{scrartcl}"
+             "\\documentclass[a4paper,fontsize=10pt,
+                              hoffset=1in,voffset=1in]{scrartcl}"
              ("\\section{%s}" . "\\section*{%s}")
              ("\\subsection{%s}" . "\\subsection*{%s}")
              ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
              ("\\paragraph{%s}" . "\\paragraph*{%s}")
-             ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))))
+             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  (add-to-list 'org-latex-classes
+    '("koma-report"
+    "\\documentclass[a4paper]{scrreprt}"
+    ("\\section{%s}" . "\\section*{%s}")
+    ("\\subsection{%s}" . "\\subsection*{%s}")
+    ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+    ("\\paragraph{%s}" . "\\paragraph*{%s}")
+    ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+  (add-to-list 'org-latex-classes
+    '(("beamer"
+    "\\documentclass[12pt]{beamer} "
+      ("\\section{%s}" . "\\section*{%s}")
+      ("\\subsection{%s}" . "\\subsection*{%s}")
+      ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+      ("\\paragraph{%s}" . "\\paragraph*{%s}")
+      ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))))
   #+END_SRC
 * Agenda management:
   Sync org files with Dropbox for agenda management. Inspired by [[https://github.com/j0/][Joel]] & [[https://github.com/jethrokuan/.emacs.d][Jethro]].
@@ -241,7 +257,7 @@ Remove blinking cursor
 :ensure t)
 #+ENd_SRC
 * Rails projectile
-#+BEGIN_SRC emacs-lisp :tangle yes
+  #+BEGIN_SRC emacs-lisp :tangle yes
 (setenv "PATH" (concat (getenv "HOME") "/.rbenv/shims:" (getenv "HOME") "/.rbenv/bin:" (getenv "PATH")))
 (setq exec-path (cons (concat (getenv "HOME") "/.rbenv/shims") (cons (concat (getenv "HOME") "/.rbenv/bin") exec-path)))
 (add-to-list 'load-path "~/.emacs.d/vendor/bundler.el")
@@ -249,9 +265,9 @@ Remove blinking cursor
 (projectile-rails-global-mode)
 ;; hotfix for rbenv shell problem.
 
-#+END_SRC
+  #+END_SRC
 * TIDE Setup
-#+BEGIN_SRC emacs-lisp :tangle yes
+  #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package tide
   :ensure t
   :after (typescript-mode company flycheck)
@@ -287,6 +303,11 @@ Remove blinking cursor
           (lambda ()
             (when (string-equal "tsx" (file-name-extension buffer-file-name))
               (setup-tide-mode))))
+(add-hook 'web-mode-hook
+          (lambda ()
+            (setq web-mode-markup-indent-offset 2)
+            (setq web-mode-css-indent-offset 2)
+            (setq web-mode-code-indent-offset 2)))
 ;; enable typescript-tslint checker
 (require 'flycheck)
 (flycheck-add-mode 'typescript-tslint 'web-mode)
@@ -296,22 +317,58 @@ Remove blinking cursor
 :placeOpenBraceOnNewLineForFunctions nil
 :indentSize 2
 :tabSize 2))
-#+END_SRC
+  #+END_SRC
+* LSP:
+  TODO: use LSP for the rest of my languages.
+  #+BEGIN_SRC emacs-lisp :tangle yes
+  (require 'lsp-mode)
+  (require 'lsp-ui)
+  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+  #+END_SRC
 * Haskell:
-TODO: add hs-lint.
-#+BEGIN_SRC emacs_lisp :tangle yes
-(custom-set-variables
- '(haskell-stylish-on-save t))
-#+END_SRC
+  #+BEGIN_SRC emacs-lisp :tangle yes
+  (require 'lsp-haskell)
+  (add-hook 'haskell-mode-hook #'lsp)
+  #+END_SRC
 * Python IDE:
-#+BEGIN_SRC emacs-lisp :tangle yes
+  #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package elpy
   :ensure t
   :init
-  (elpy-enable))
-#+END_SRC
-* Prolog
-  #+BEGIN_SRC emacs-lisp :tangle yes
-  (global-set-key (kbd "C-x p") 'ediprolog-dwim)
-  (add-to-list 'auto-mode-alist '("\\.pl\\'" . prolog-mode))
+  (elpy-enable)
+  (setq python-shell-interpreter "python3"
+        python-shell-interpreter-args "-i"))
   #+END_SRC
+* OCaml
+  #+BEGIN_SRC emacs-lisp :tangle yes
+;; -- opam and utop setup --------------------------------
+;; Setup environment variables using opam
+(dolist
+   (var (car (read-from-string
+           (shell-command-to-string "opam config env --sexp"))))
+ (setenv (car var) (cadr var)))
+;; Update the emacs path
+(setq exec-path (split-string (getenv "PATH") path-separator))
+;; Update the emacs load path
+(push (concat (getenv "OCAML_TOPLEVEL_PATH")
+          "/../../share/emacs/site-lisp") load-path)
+(use-package utop
+  :commands utop-minor-mode)
+
+(use-package tuareg
+  :after utop
+  :init
+  (setq tuareg-indent-align-with-first-arg nil))
+
+(let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var" "share")))))
+  (when (and opam-share (file-directory-p opam-share))
+    ;; Register Merlin
+    (add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
+    (autoload 'merlin-mode "merlin" nil t nil)
+    ;; Automatically start it in OCaml buffers
+    (add-hook 'tuareg-mode-hook 'merlin-mode t)
+    ;; Use opam switch to lookup ocamlmerlin binary
+    (setq merlin-command 'opam)))
+
+(add-hook 'tuareg-mode-hook 'utop-minor-mode)
+#+END_SRC
