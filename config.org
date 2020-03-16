@@ -40,8 +40,6 @@ Indentation
 Org mode hooks
 #+BEGIN_SRC emacs-lisp :tangle yes
 (add-hook 'org-mode-hook (lambda () (mac-auto-operator-composition-mode 1)))
-;; Adds alphabetical bulleting. JK ITS BROKEN
-;;(setq org-list-allow-alphabetical nil)
 #+END_SRC
 
 Snippets
@@ -91,20 +89,16 @@ Remove blinking cursor
   (avy-setup-default))
 
 ;; auto-complete settings
-(use-package auto-complete
+(use-package company
   :ensure t
-  :init
-  (progn
-    (ac-config-default)
-    (global-auto-complete-mode t)
-    ))
-
-(setq ac-auto-start nil)
-(ac-set-trigger-key "TAB")
+  :config
+  ;; Optionally enable completion-as-you-type behavior.
+  (setq company-idle-delay 0)
+  (setq company-minimum-prefix-length 1))
 
 (setq-default truncate-lines t)
 
-(defun jethro/truncate-lines-hook () ;; stolen from jethro :P
+(defun jethro/truncate-lines-hook () ;; stolen from jethro
   (setq truncate-lines nil))
 
 (add-hook 'text-mode-hook 'jethro/truncate-lines-hook)
@@ -178,6 +172,7 @@ Remove blinking cursor
   (TeX-view-program-selection '((output-pdf "zathura")))
   :config
   (setq-default TeX-engine 'luatex)
+  (setq org-latex-listings 'minted)
   (add-hook 'LaTeX-mode-hook
             (lambda ()
               (company-mode)
@@ -213,7 +208,12 @@ Remove blinking cursor
       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
       ("\\paragraph{%s}" . "\\paragraph*{%s}")
       ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))))
-  #+END_SRC
+(setq org-latex-listings 'minted
+      org-latex-packages-alist '(("" "minted"))
+      org-latex-pdf-process
+      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+#+END_SRC
 * Agenda management:
   Sync org files with Dropbox for agenda management. Inspired by [[https://github.com/j0/][Joel]] & [[https://github.com/jethrokuan/.emacs.d][Jethro]].
 ** 1. Capture setup:
@@ -258,8 +258,8 @@ Remove blinking cursor
 #+ENd_SRC
 * Rails projectile
   #+BEGIN_SRC emacs-lisp :tangle yes
-(setenv "PATH" (concat (getenv "HOME") "/.rbenv/shims:" (getenv "HOME") "/.rbenv/bin:" (getenv "PATH")))
-(setq exec-path (cons (concat (getenv "HOME") "/.rbenv/shims") (cons (concat (getenv "HOME") "/.rbenv/bin") exec-path)))
+(setenv "PATH" (concat (getenv "HOME") "/.rbenv/shims:" (getenv "HOME") "/.rbenv/bin:" (getenv "HOME") "/go/bin:" (getenv "PATH")))
+(setq exec-path (cons (concat (getenv "HOME") "/.rbenv/shims") (cons (concat (getenv "HOME") "/.rbenv/bin") (cons (concat (getenv "HOME") "/go/bin") exec-path))))
 (add-to-list 'load-path "~/.emacs.d/vendor/bundler.el")
 (require 'bundler)
 (projectile-rails-global-mode)
@@ -321,23 +321,28 @@ Remove blinking cursor
 * LSP:
   TODO: use LSP for the rest of my languages.
   #+BEGIN_SRC emacs-lisp :tangle yes
-  (require 'lsp-mode)
-  (require 'lsp-ui)
-  (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+  (use-package lsp-mode
+    :ensure t
+    :commands (lsp lsp-deferred)
+    :hook (go-mode . lsp-deferred))
+  (use-package lsp-ui
+    :ensure t
+    :commands lsp-ui-mode)
+  (use-package company-lsp
+    :ensure t
+    :commands company-lsp)
   #+END_SRC
 * Haskell:
   #+BEGIN_SRC emacs-lisp :tangle yes
-  (require 'lsp-haskell)
-  (add-hook 'haskell-mode-hook #'lsp)
+  (use-package lsp-haskell
+    :ensure t
+    :hook (haskell-mode . lsp-deferred))
   #+END_SRC
 * Python IDE:
   #+BEGIN_SRC emacs-lisp :tangle yes
-(use-package elpy
-  :ensure t
-  :init
-  (elpy-enable)
-  (setq python-shell-interpreter "python3"
-        python-shell-interpreter-args "-i"))
+  (use-package lsp-python-ms
+    :ensure t
+    :hook (python-mode . lsp-deferred))
   #+END_SRC
 * OCaml
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -371,4 +376,25 @@ Remove blinking cursor
     (setq merlin-command 'opam)))
 
 (add-hook 'tuareg-mode-hook 'utop-minor-mode)
+#+END_SRC
+* Go:
+  #+BEGIN_SRC emacs-lisp :tangle yes
+  (defun lsp-go-install-save-hooks ()
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)
+    (add-hook 'before-save-hook #'lsp-organize-imports t t))
+  (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+  (add-hook 'go-mode-hook (lambda () (defun 6824-bullshit ()
+    (interactive)
+    (setenv "GOPATH" "/Users/ju/work/DYOM_Distributed_Systems/6.824-golabs-2020")
+  )))
+  #+END_SRC
+* Markdown Export:
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package ox-hugo)
+#+END_SRC
+* Reason
+#+BEGIN_SRC emacs-lisp :tangle yes
+(use-package reason-mode
+  :ensure t
+  :hook (reason-mode . utop-minor-mode))
 #+END_SRC
