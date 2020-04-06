@@ -30,8 +30,8 @@ Custom buttons :D
 
 Indentation
 #+BEGIN_SRC emacs-lisp :tangle yes
-(setq-default tab-width 2)
-(setq-default c-basic-offset 4) ;; Set C offset
+(setq-default tab-width 8)
+(setq-default c-basic-offset 8) ;; Set C offset
 (setq-default js-indent-level 2)
 (setq-default indent-tabs-mode nil)
 (setq-default show-trailing-whitespace t) ;; show trailing whitespaces
@@ -132,27 +132,16 @@ Remove blinking cursor
 	(define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
 	))
   #+END_SRC
-* Theme lol:
+* Theme:
   #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package all-the-icons)
   (use-package doom-modeline
       :ensure t
       :hook (after-init . doom-modeline-mode))
-  (require 'doom-themes)
-
-  ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
-
-  ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
-  ;; may have their own settings.
-  (load-theme 'doom-one t)
-
-  ;; Enable flashing mode-line on errors
-  (doom-themes-visual-bell-config)
-
-  ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config)
+  (use-package dracula-theme
+      :ensure t
+      :config (setq dracula-enlarge-headings nil))
+  (load-theme 'dracula t)
   #+END_SRC
 * LaTeX:
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -342,7 +331,11 @@ Remove blinking cursor
   #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package lsp-python-ms
     :ensure t
-    :hook (python-mode . lsp-deferred))
+    :hook (python-mode . lsp-deferred)
+    :config
+    ;; I almost always use Python3, so I set it as my default.
+    (setq python-shell-interpreter "python3")
+    (setq lsp-python-ms-python-executable-cmd "python3"))
   #+END_SRC
 * OCaml
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -398,3 +391,8 @@ Remove blinking cursor
   :ensure t
   :hook (reason-mode . utop-minor-mode))
 #+END_SRC
+* C:
+  #+BEGIN_SRC emacs-lisp :tangle yes
+  (add-hook 'c-mode-hook (lambda () (setq indent-tabs-mode t)))
+  #+END_SRC
+
