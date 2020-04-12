@@ -232,7 +232,9 @@ Remove blinking cursor
 #+END_SRC
 * Magit:
   #+BEGIN_SRC emacs-lisp :tangle yes
-  (global-set-key (kbd "C-x g") 'magit-status)
+  (use-package magit
+      :ensure t
+      :bind ("C-x g" . magit-status))
   #+END_SRC
 * Reveal.js:
 #+BEGIN_SRC emacs-lisp :tangle yes
@@ -286,7 +288,7 @@ Remove blinking cursor
 
 (add-hook 'typescript-mode-hook #'setup-tide-mode)
 
-(require 'web-mode)
+(use-package web-mode)
 (add-to-list 'auto-mode-alist '("\\.tsx\\'" . web-mode))
 (add-hook 'web-mode-hook
           (lambda ()
@@ -396,3 +398,9 @@ Remove blinking cursor
   (add-hook 'c-mode-hook (lambda () (setq indent-tabs-mode t)))
   #+END_SRC
 
+* Elixir
+  #+BEGIN_src emacs-lisp :tangle yes
+  (use-package lsp-elixir
+      :ensure t
+      :hook (elixir-mode . lsp-deferred))
+  #+END_src
