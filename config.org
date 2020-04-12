@@ -227,9 +227,9 @@ Remove blinking cursor
 (setq org-log-done 'time)
 #+END_SRC
 * Epub reading:
-#+BEGIN_SRC emacs-lisp :tangle yes
+  #+BEGIN_SRC emacs-lisp :tangle yes
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
-#+END_SRC
+  #+END_SRC
 * Magit:
   #+BEGIN_SRC emacs-lisp :tangle yes
   (use-package magit
@@ -237,7 +237,7 @@ Remove blinking cursor
       :bind ("C-x g" . magit-status))
   #+END_SRC
 * Reveal.js:
-#+BEGIN_SRC emacs-lisp :tangle yes
+  #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package ox-reveal
 :ensure ox-reveal)
 
@@ -246,7 +246,7 @@ Remove blinking cursor
 
 (use-package htmlize
 :ensure t)
-#+ENd_SRC
+  #+ENd_SRC
 * Rails projectile
   #+BEGIN_SRC emacs-lisp :tangle yes
 (setenv "PATH" (concat (getenv "HOME") "/.rbenv/shims:" (getenv "HOME") "/.rbenv/bin:" (getenv "HOME") "/go/bin:" (getenv "PATH")))
@@ -370,7 +370,7 @@ Remove blinking cursor
     (setq merlin-command 'opam)))
 
 (add-hook 'tuareg-mode-hook 'utop-minor-mode)
-#+END_SRC
+  #+END_SRC
 * Go:
   #+BEGIN_SRC emacs-lisp :tangle yes
   (defun lsp-go-install-save-hooks ()
@@ -383,15 +383,15 @@ Remove blinking cursor
   )))
   #+END_SRC
 * Markdown Export:
-#+BEGIN_SRC emacs-lisp :tangle yes
+  #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package ox-hugo)
-#+END_SRC
+  #+END_SRC
 * Reason
-#+BEGIN_SRC emacs-lisp :tangle yes
+  #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package reason-mode
   :ensure t
   :hook (reason-mode . utop-minor-mode))
-#+END_SRC
+  #+END_SRC
 * C:
   #+BEGIN_SRC emacs-lisp :tangle yes
   (add-hook 'c-mode-hook (lambda () (setq indent-tabs-mode t)))
