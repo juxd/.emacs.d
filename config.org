@@ -12,10 +12,10 @@
 (setq mac-command-modifier 'meta)
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-(add-to-list 'default-frame-alist '(font . "Inconsolata for Powerline 14"))
+(add-to-list 'default-frame-alist '(font . "Cascadia Code 12"))
 (add-to-list 'auto-mode-alist '("\\.pdf\\'" . doc-view-mode))
 
-(set-face-attribute 'default t :font "Inconsolata for Powerline 14" )
+(set-face-attribute 'default t :font "Cascadia Code 12" )
 
 (when (version<= "26.0.50" emacs-version)
   (global-display-line-numbers-mode))
@@ -64,11 +64,11 @@ Remove blinking cursor
   (exec-path-from-shell-initialize))
   #+END_SRC
 * flycheck:
-#+BEGIN_SRC: emacs-lisp :tangle yes
+  #+BEGIN_SRC emacs-lisp :tangle yes
 (use-package flycheck
   :ensure t
   :init (global-flycheck-mode))
-#+END_SRC
+  #+END_SRC
 * Some shit I got from online:
 ** Noob helpers
   #+BEGIN_SRC emacs-lisp :tangle yes
@@ -300,7 +300,6 @@ Remove blinking cursor
             (setq web-mode-css-indent-offset 2)
             (setq web-mode-code-indent-offset 2)))
 ;; enable typescript-tslint checker
-(require 'flycheck)
 (flycheck-add-mode 'typescript-tslint 'web-mode)
 
 (setq tide-format-options
